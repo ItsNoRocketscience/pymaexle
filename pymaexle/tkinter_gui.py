@@ -20,6 +20,7 @@ class GameGUI:
         self.master = master
         self.master.protocol('WM_DELETE_WINDOW', self.close)
         self.master.resizable(False, False)
+        self.master.tk_setPalette(background='white')  # Force white background
         self.set_icon('twodices.ico')
 
         if player_name:
@@ -36,16 +37,24 @@ class GameGUI:
         self.master.bind('q', self.key_pass)
         self.master.bind('r', self.key_roll)
 
+        # Set font sizes depending on operating system
+        # Must be 5points larger on MacOS, idk why
+        if sys.platform == 'darwin':
+            header_font = ('Courier', 25)
+            text_font = ('Courier', 15)
+        else:
+            header_font = ('Courier', 20)
+            text_font = ('Courier', 10)
+
         tk.Label(self.master, text='Quarantäne-Mäxle',
-                 font=('Courier', 20)).\
+                 font=header_font).\
             grid(row=0, column=0)
 
         self.text_var = tk.StringVar(self.master)
         self.text_var.set('\n'*12)
 
-
         self.text_ent = tk.Label(self.master, textvariable=self.text_var,
-                                 font=('Courier', 10), bg='white',
+                                 font=text_font, bg='white', fg='black',
                                  wraplength=200, height=12, anchor=tk.N,
                                  justify=tk.LEFT)
         self.text_ent.grid(row=0, column=1, rowspan=2, padx=3, pady=3,
@@ -147,11 +156,11 @@ class GameGUI:
         y2 = y1 + size
 
         self.dice_shapes[n_dice].append(
-            self.canvas.create_rectangle(x1, y1, x2, y2,
+            self.canvas.create_rectangle(x1, y1, x2, y2, outline='black',
                                          fill='white', width=4))
 
         circ_coords = []
-        if num == None:
+        if num is None:
             pos = ((x1 + x2) / 2, (y1 + y2) / 2,)
             self.dice_shapes[n_dice].append(
                 self.canvas.create_text(pos, text='?',
@@ -191,7 +200,6 @@ class GameGUI:
             self.dice_shapes[n_dice].append(
                 self.draw_num_circ(pos, color=color))
 
-
     def draw_num_circ(self, pos, color='black'):
         radius = 10
         return self.canvas.create_circle(pos[0], pos[1],
@@ -207,7 +215,6 @@ class GameGUI:
 
         self.draw_dice(0, None)
         self.draw_dice(1, None)
-
 
     def update_dices(self, numbers=None, color='black'):
         self.reset_dice(0)
@@ -332,11 +339,11 @@ class GameGUI:
         # print('\n'.join(lines))
         self.text_var.set('\n'.join(lines))
 
-
     def close(self):
         if self.client:
             self.client.close_game()
         self.master.destroy()
+
 
 if __name__ == '__main__':
     root = tk.Tk()

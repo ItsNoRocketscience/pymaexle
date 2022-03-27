@@ -21,6 +21,8 @@ Changelog:
           => Fix: deactivating pass button before setting dice-values to None
         - Added version in title of window
 """
+# TODO: Wider window to fit more text?
+# TODO: Mac Support: Text is not shown correctly.? (Dark-Mode?) => Test with Server Connection
 import tkinter as tk
 import tkinter.messagebox
 import threading
@@ -38,6 +40,7 @@ class ClientGUI:
         self.master.resizable(False, False)
         self.master.title('Lobby Client v' + version)
         self.master.protocol('WM_DELETE_WINDOW', self.close)
+        self.master.tk_setPalette(background='white')  # Force white background
         self.set_icon('rocket.ico')
 
         self.set_geo()
